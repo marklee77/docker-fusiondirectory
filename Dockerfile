@@ -5,7 +5,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get -y install \
         fusiondirectory \
-        fusiondirectory-schema && \
+        fusiondirectory-schema \
+        libapache2-mod-php && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 RUN ln -s /usr/sbin/fusiondirectory-insert-schema /etc/ldap/dbinit.d/
