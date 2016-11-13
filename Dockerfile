@@ -9,3 +9,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 RUN ln -s /usr/sbin/fusiondirectory-insert-schema /etc/ldap/dbinit.d/
+
+COPY apache2.sh /etc/service/apache2/run
+
+EXPOSE 80
