@@ -6,7 +6,9 @@ RUN apt-get update && \
     apt-get -y install \
         fusiondirectory \
         fusiondirectory-schema \
-        libapache2-mod-php && \
+        libapache2-mod-php \
+        php-mbstring \
+        php-mdb2 && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 RUN ln -s /usr/sbin/fusiondirectory-insert-schema /etc/ldap/dbinit.d/
