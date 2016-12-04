@@ -14,12 +14,7 @@ RUN apt-get update && \
         fusiondirectory-plugin-applications-schema \
         fusiondirectory-plugin-argonaut \
         fusiondirectory-plugin-argonaut-schema \
-        fusiondirectory-plugin-asterisk \
-        fusiondirectory-plugin-asterisk-schema \
-        fusiondirectory-plugin-autofs \
-        fusiondirectory-plugin-autofs-schema \
         fusiondirectory-plugin-certificates \
-        fusiondirectory-plugin-database-connector \
         fusiondirectory-plugin-debconf \
         fusiondirectory-plugin-debconf-schema \
         fusiondirectory-plugin-dhcp \
@@ -30,12 +25,8 @@ RUN apt-get update && \
         fusiondirectory-plugin-dovecot-schema \
         fusiondirectory-plugin-dsa \
         fusiondirectory-plugin-dsa-schema \
-        fusiondirectory-plugin-ejbca \
-        fusiondirectory-plugin-ejbca-schema \
         fusiondirectory-plugin-fai \
         fusiondirectory-plugin-fai-schema \
-        fusiondirectory-plugin-fax \
-        fusiondirectory-plugin-fax-schema \
         fusiondirectory-plugin-freeradius \
         fusiondirectory-plugin-freeradius-schema \
         fusiondirectory-plugin-fusioninventory \
@@ -44,8 +35,6 @@ RUN apt-get update && \
         fusiondirectory-plugin-gpg-schema \
         fusiondirectory-plugin-ipmi \
         fusiondirectory-plugin-ipmi-schema \
-        fusiondirectory-plugin-kolab \
-        fusiondirectory-plugin-kolab-schema \
         fusiondirectory-plugin-ldapdump \
         fusiondirectory-plugin-ldapmanager \
         fusiondirectory-plugin-mail \
@@ -64,15 +53,11 @@ RUN apt-get update && \
         fusiondirectory-plugin-ppolicy-schema \
         fusiondirectory-plugin-puppet \
         fusiondirectory-plugin-puppet-schema \
-        fusiondirectory-plugin-pureftpd \
-        fusiondirectory-plugin-pureftpd-schema \
         fusiondirectory-plugin-quota \
         fusiondirectory-plugin-quota-schema \
         fusiondirectory-plugin-repository \
         fusiondirectory-plugin-repository-schema \
         fusiondirectory-plugin-rsyslog \
-        fusiondirectory-plugin-samba \
-        fusiondirectory-plugin-samba-schema \
         fusiondirectory-plugin-sogo \
         fusiondirectory-plugin-sogo-schema \
         fusiondirectory-plugin-squid \
@@ -81,10 +66,6 @@ RUN apt-get update && \
         fusiondirectory-plugin-ssh-schema \
         fusiondirectory-plugin-sudo \
         fusiondirectory-plugin-sudo-schema \
-        fusiondirectory-plugin-supann \
-        fusiondirectory-plugin-supann-schema \
-        fusiondirectory-plugin-sympa \
-        fusiondirectory-plugin-sympa-schema \
         fusiondirectory-plugin-systems \
         fusiondirectory-plugin-systems-schema \
         fusiondirectory-plugin-weblink \
@@ -99,8 +80,7 @@ RUN apt-get update && \
         php-mdb2 && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-RUN ln -s /usr/sbin/fusiondirectory-insert-schema /etc/ldap/dbinit.d/
-
+COPY fusiondirectory-ldap-initdb.sh /etc/ldap/dbinit.d/fusiondirectory.sh
 COPY apache2.sh /etc/service/apache2/run
 
 EXPOSE 80

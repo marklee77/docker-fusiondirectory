@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  fusiondirectory:
+    build: .
+    environment:
+      slapd_enable_ssl: 'no'
+      slapd_require_ssl: 'no'
+    ports:
+      - "80:80"
