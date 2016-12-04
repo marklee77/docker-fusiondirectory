@@ -80,7 +80,8 @@ RUN apt-get update && \
         php-mdb2 && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-COPY fusiondirectory-ldap-initdb.sh /etc/ldap/dbinit.d/fusiondirectory.sh
 COPY apache2.sh /etc/service/apache2/run
+COPY fusiondirectory-ldap-initdb.sh /etc/ldap/dbinit.d/
+COPY fusiondirectory-first-login.sh /etc/my_init.d/
 
 EXPOSE 80
