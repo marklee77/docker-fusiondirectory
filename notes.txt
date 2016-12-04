@@ -1,0 +1,14 @@
+https://forge.fusiondirectory.org/projects/fd-plugins/wiki/Automating_setup
+
+- could have fusiondirectory in separate container from slapd...
+
+
+
+dn: dc=localdomain
+objectClass: dcObject
+objectClass: top
+objectClass: locality
++
+objectClass: gosaDepartment
+ou: localdomain
+description: localdomain

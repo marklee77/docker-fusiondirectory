@@ -4,6 +4,7 @@ services:
   fusiondirectory:
     build: .
     environment:
+      slapd_basedn: dc=ldap,dc=dit
       slapd_enable_ssl: 'no'
       slapd_require_ssl: 'no'
     ports:
