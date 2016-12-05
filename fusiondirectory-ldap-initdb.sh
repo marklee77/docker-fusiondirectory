@@ -10,8 +10,8 @@ while [ -n "$SCHEMAS_TO_LOAD" ]; do
     done
 done
 
-ldapadd -D cn=admin,dc=ldap,dc=dit -y /etc/ldap/ldap.passwd <<EOF
-dn: dc=ldap,dc=dit
+ldapadd -D cn=admin,$slapd_basedn -y /etc/ldap/ldap.passwd <<EOF
+dn: $slapd_basedn
 dc: ldap
 ou: ldap
 description: ldap
@@ -20,47 +20,69 @@ objectClass: dcObject
 objectClass: locality
 objectClass: gosaDepartment
 objectclass: gosaAcl
-gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,dc=ldap,dc=dit" | base64):$(echo -n "uid=fd-admin,ou=people,dc=ldap,dc=dit" | base64)
+gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,$slapd_basedn" | base64):$(echo -n "uid=fd-admin,ou=people,$slapd_basedn" | base64)
 
-dn: ou=configs,dc=ldap,dc=dit
-ou: configs
-objectClass: organizationalUnit
-
-dn: ou=snapshots,dc=ldap,dc=dit
+dn: ou=snapshots,$slapd_basedn
 ou: snapshots
 objectClass: organizationalUnit
 
-dn: ou=people,dc=ldap,dc=dit
+dn: ou=people,$slapd_basedn
 ou: people
 objectClass: organizationalUnit
 
-dn: ou=groups,dc=ldap,dc=dit
+dn: ou=groups,$slapd_basedn
 ou: groups
 objectClass: organizationalUnit
 
-dn: ou=systems,dc=ldap,dc=dit
+dn: ou=systems,$slapd_basedn
 ou: systems
 objectClass: organizationalUnit
 
-dn: ou=configs,ou=systems,dc=ldap,dc=dit
+dn: ou=configs,ou=systems,$slapd_basedn
 objectClass: organizationalUnit
 ou: configs
 
-dn: ou=fusiondirectory,ou=configs,ou=systems,dc=ldap,dc=dit
+dn: ou=fusiondirectory,ou=configs,ou=systems,$slapd_basedn
 ou: fusiondirectory
 objectClass: organizationalUnit
 
-dn: ou=aclroles,dc=ldap,dc=dit
+dn: ou=aclroles,$slapd_basedn
 ou: aclroles
 objectClass: organizationalUnit
 
-dn: cn=fusiondirectory,ou=configs,dc=ldap,dc=dit
+dn: cn=admin,ou=aclroles,$slapd_basedn
+cn: admin
+description: Give all rights on all objects
+objectClass: top
+objectClass: gosaRole
+gosaAclTemplate: 0:all;cmdrw
+
+dn: cn=manager,ou=aclroles,$slapd_basedn
+cn: manager
+description: Give all rights on users in the given branch
+objectClass: top
+objectClass: gosaRole
+gosaAclTemplate: 0:user/password;cmdrw,user/user;cmdrw,user/posixAccount;cmdrw
+
+dn: cn=editowninfos,ou=aclroles,$slapd_basedn
+cn: editowninfos
+description: Allow users to edit their own information (main tab and posix use
+  only on base)
+objectClass: top
+objectClass: gosaRole
+gosaAclTemplate: 0:user/posixAccount;srw,user/user;srw
+
+dn: ou=configs,$slapd_basedn
+ou: configs
+objectClass: organizationalUnit
+
+dn: cn=fusiondirectory,ou=configs,$slapd_basedn
 fdPasswordDefaultHash: ssha
 fdUserRDN: ou=people
 fdGroupRDN: ou=groups
 fdAclRoleRDN: ou=aclroles
-fdGidNumberBase: 1100
-fdUidNumberBase: 1100
+fdGidNumberBase: 2000
+fdUidNumberBase: 2000
 fdAccountPrimaryAttribute: uid
 fdLoginAttribute: uid
 fdTimezone: Europe/London
@@ -68,7 +90,7 @@ fdRfc2307bis: TRUE
 fdStrictNamingRules: TRUE
 fdHandleExpiredAccounts: FALSE
 fdEnableSnapshots: TRUE
-fdSnapshotBase: ou=snapshots,dc=ldap,dc=dit
+fdSnapshotBase: ou=snapshots,$slapd_basedn
 fdLanguage: en_US
 fdTheme: default
 fdPrimaryGroupFilter: FALSE
@@ -175,7 +197,7 @@ fdEncodings: ISO8859-4=ISO8859-4 (Latin 4)
 fdEncodings: ISO8859-5=ISO8859-5 (Latin 5)
 fdEncodings: cp850=CP850 (Europe)
 
-dn: uid=fd-admin,ou=people,dc=ldap,dc=dit
+dn: uid=fd-admin,ou=people,$slapd_basedn
 objectClass: top
 objectClass: person
 objectClass: gosaAccount
@@ -186,28 +208,6 @@ sn: Administrator
 cn: System Administrator-fd-admin
 uid: fd-admin
 userPassword: $(slappasswd -s "fusion")
-
-dn: cn=admin,ou=aclroles,dc=ldap,dc=dit
-cn: admin
-description: Give all rights on all objects
-objectClass: top
-objectClass: gosaRole
-gosaAclTemplate: 0:all;cmdrw
-
-dn: cn=manager,ou=aclroles,dc=ldap,dc=dit
-cn: manager
-description: Give all rights on users in the given branch
-objectClass: top
-objectClass: gosaRole
-gosaAclTemplate: 0:user/password;cmdrw,user/user;cmdrw,user/posixAccount;cmdrw
-
-dn: cn=editowninfos,ou=aclroles,dc=ldap,dc=dit
-cn: editowninfos
-description: Allow users to edit their own information (main tab and posix use
-  only on base)
-objectClass: top
-objectClass: gosaRole
-gosaAclTemplate: 0:user/posixAccount;srw,user/user;srw
 EOF
 
 cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
@@ -240,11 +240,11 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
     <!-- Location definition -->
     <location name="default"
         ldapTLS="TRUE"
-        config="ou=fusiondirectory,ou=configs,ou=systems,dc=ldap,dc=dit">
+        config="ou=fusiondirectory,ou=configs,ou=systems,$slapd_basedn">
 
-        <referral URI="ldap://localhost/dc=ldap,dc=dit"
-                        adminDn="cn=admin,dc=ldap,dc=dit"
-                        adminPassword="$(cat /etc/ldap/ldap.passwd)" />
+        <referral URI="ldap://localhost/$slapd_basedn"
+                        adminDn="cn=admin,$slapd_basedn"
+                        adminPassword="$slapd_admin_password" />
     </location>
   </main>
 </conf>
