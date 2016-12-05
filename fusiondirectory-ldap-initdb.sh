@@ -239,6 +239,7 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
 
     <!-- Location definition -->
     <location name="default"
+        ldapTLS="TRUE"
         config="ou=fusiondirectory,ou=configs,ou=systems,dc=ldap,dc=dit">
 
         <referral URI="ldap://localhost/dc=ldap,dc=dit"
