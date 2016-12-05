@@ -81,7 +81,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 COPY apache2.sh /etc/service/apache2/run
+COPY fusiondirectory-first-login.sh /etc/service/fusiondirectory_first_login/run
 COPY fusiondirectory-ldap-initdb.sh /etc/ldap/dbinit.d/
-COPY fusiondirectory-first-login.sh /etc/my_init.d/
 
 EXPOSE 80
