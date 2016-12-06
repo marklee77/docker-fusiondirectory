@@ -14,6 +14,25 @@ while [ -n "$SCHEMAS_TO_LOAD" ]; do
     done
 done
 
+ldapadd -f /etc/ldap/schema/ppolicy.ldif
+
+ldapadd <<EOF
+dn: cn=module,cn=config
+cn: module
+objectClass: olcModuleList
+olcModuleLoad: ppolicy.la
+
+dn: olcOverlay=ppolicy,olcDatabase={1}mdb,cn=config
+objectClass: olcOverlayConfig
+objectClass: olcPPolicyConfig
+olcOverlay: ppolicy
+olcPPolicyDefault: cn=default,ou=ppolicies,dc=ldap,dc=dit
+olcPPolicyHashCleartext: FALSE
+olcPPolicyUseLockout: FALSE
+olcPPolicyForwardUpdates: FALSE
+EOF
+
+
 ldapadd -D cn=admin,$slapd_basedn -y /etc/ldap/ldap.passwd <<EOF
 dn: $slapd_basedn
 dc: ldap
@@ -29,6 +48,21 @@ gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,$slapd_basedn" | base64)
 dn: ou=snapshots,$slapd_basedn
 ou: snapshots
 objectClass: organizationalUnit
+
+dn: ou=ppolicies,$slapd_basedn
+ou: ppolicies
+objectClass: organizationalUnit
+
+dn: cn=default,ou=ppolicies,$slapd_basedn
+cn: default
+pwdAttribute: userPassword
+pwdAllowUserChange: TRUE
+pwdLockout: FALSE
+pwdSafeModify: FALSE
+pwdCheckQuality: 0
+pwdMustChange: FALSE
+objectClass: device
+objectClass: pwdPolicy
 
 dn: ou=people,$slapd_basedn
 ou: people
