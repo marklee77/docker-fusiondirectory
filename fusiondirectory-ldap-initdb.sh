@@ -1,5 +1,9 @@
 #!/bin/bash
 
+: ${fusiondirectory_timezone:=Europe/London}
+: ${fusiondirectory_language:=en_US}
+: ${fusiondirectory_admin_password:=$(pwgen -s1 32)}
+
 /usr/sbin/fusiondirectory-insert-schema -e /etc/ldap/schema/nis.schema -y
 SCHEMAS_TO_LOAD=$(ls /etc/ldap/schema/fusiondirectory/*.schema)
 while [ -n "$SCHEMAS_TO_LOAD" ]; do
@@ -85,20 +89,20 @@ fdGidNumberBase: 2000
 fdUidNumberBase: 2000
 fdAccountPrimaryAttribute: uid
 fdLoginAttribute: uid
-fdTimezone: Europe/London
+fdTimezone: $fusiondirectory_timezone
 fdRfc2307bis: TRUE
 fdStrictNamingRules: TRUE
 fdHandleExpiredAccounts: FALSE
 fdEnableSnapshots: TRUE
 fdSnapshotBase: ou=snapshots,$slapd_basedn
-fdLanguage: en_US
+fdLanguage: $fusiondirectory_language
 fdTheme: default
 fdPrimaryGroupFilter: FALSE
 fdModificationDetectionAttribute: entryCSN
 fdCopyPaste: TRUE
 fdListSummary: TRUE
 fdLdapStats: FALSE
-fdWarnSSL: TRUE
+fdWarnSSL: FALSE
 fdForceSSL: FALSE
 fdSchemaCheck: TRUE
 fdLogging: TRUE
@@ -106,17 +110,14 @@ fdDisplayErrors: FALSE
 fdSessionLifeTime: 1800
 fdDebugLevel: 0
 cn: fusiondirectory
-fusionConfigMd5: a2d84b4bc24dfe28e21f6576ae097d9b
 fdForcePasswordDefaultHash: FALSE
 fdLdapSizeLimit: 200
 fdDisplayHookOutput: FALSE
-fdShells: /bin/ash
 fdShells: /bin/bash
 fdShells: /bin/csh
 fdShells: /bin/sh
 fdShells: /bin/ksh
 fdShells: /bin/tcsh
-fdShells: /bin/dash
 fdShells: /bin/zsh
 fdShells: /sbin/nologin
 fdShells: /bin/false
@@ -207,28 +208,16 @@ givenName: System
 sn: Administrator
 cn: System Administrator-fd-admin
 uid: fd-admin
-userPassword: $(slappasswd -s "fusion")
+userPassword: $(slappasswd -s "$fusiondirectory_admin_password")
 EOF
 
 cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
 <?xml version="1.0"?>
 <conf>
-
-  <!-- Services **************************************************************
-    Old services that are not based on simpleService needs to be listed here
-   -->
   <serverservice>
     <tab class="serviceDHCP"        />
     <tab class="serviceDNS"         />
   </serverservice>
-
-  <!-- Main section **********************************************************
-       The main section defines global settings, which might be overridden by
-       each location definition inside.
-
-       For more information about the configuration parameters, take a look at
-       the FusionDirectory.conf(5) manual page.
-  -->
   <main default="default"
         logging="TRUE"
         displayErrors="FALSE"
@@ -236,8 +225,6 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
         templateCompileDirectory="/var/spool/fusiondirectory/"
         debugLevel="0"
     >
-
-    <!-- Location definition -->
     <location name="default"
         ldapTLS="TRUE"
         config="ou=fusiondirectory,ou=configs,ou=systems,$slapd_basedn">
@@ -251,3 +238,6 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
 EOF
 chown root:www-data /etc/fusiondirectory/fusiondirectory.conf
 chmod 0640 /etc/fusiondirectory/fusiondirectory.conf
+
+echo -n "$fusiondirectory_admin_password" > /etc/fusiondirectory/fusiondirectory.passwd
+chmod 0600 /etc/fusiondirectory/fusiondirectory.passwd

@@ -3,5 +3,7 @@ version: '2'
 services:
   fusiondirectory:
     build: .
+    environment:
+      fusiondirectory_admin_password: password
     ports:
       - "80:80"
