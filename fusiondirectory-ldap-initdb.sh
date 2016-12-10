@@ -276,30 +276,6 @@ objectClass: organizationalPerson
 objectClass: person
 userPassword: $(slappasswd -s "$fusiondirectory_admin_password")
 
-#dn: ou=audit,$slapd_basedn
-#objectClass: organizationalUnit
-#ou: audit
-
-#dn: ou=locks,ou=fusiondirectory,$slapd_basedn
-#objectClass: organizationalUnit
-#ou: locks
-
-#dn: ou=snapshots,$slapd_basedn
-#objectClass: organizationalUnit
-#ou: snapshots
-
-#dn: ou=systems,$slapd_basedn
-#objectClass: organizationalUnit
-#ou: systems
-
-#dn: ou=servers,ou=systems,$slapd_basedn
-#objectClass: organizationalUnit
-#ou: servers
-
-#dn: ou=tokens,ou=fusiondirectory,$slapd_basedn
-#objectClass: organizationalUnit
-#ou: tokens
-
 dn: ou=ppolicies,$slapd_basedn
 objectClass: organizationalUnit
 ou: ppolicies
