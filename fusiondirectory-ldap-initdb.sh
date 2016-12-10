@@ -26,127 +26,64 @@ dn: olcOverlay=ppolicy,olcDatabase={1}mdb,cn=config
 objectClass: olcOverlayConfig
 objectClass: olcPPolicyConfig
 olcOverlay: ppolicy
-olcPPolicyDefault: cn=default,ou=ppolicies,dc=ldap,dc=dit
+olcPPolicyDefault: cn=default,ou=ppolicies,$slapd_basedn
 olcPPolicyHashCleartext: FALSE
 olcPPolicyUseLockout: FALSE
 olcPPolicyForwardUpdates: FALSE
 EOF
 
-
 ldapadd -D cn=admin,$slapd_basedn -y /etc/ldap/ldap.passwd <<EOF
 dn: $slapd_basedn
 dc: ldap
+o: ldap
 ou: ldap
 description: ldap
 objectClass: top
 objectClass: dcObject
-objectClass: locality
+objectClass: organization
 objectClass: gosaDepartment
 objectclass: gosaAcl
 gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,$slapd_basedn" | base64):$(echo -n "uid=fd-admin,ou=people,$slapd_basedn" | base64)
 
-dn: ou=snapshots,$slapd_basedn
-ou: snapshots
+dn: ou=fusiondirectory,$slapd_basedn
 objectClass: organizationalUnit
-
-dn: ou=ppolicies,$slapd_basedn
-ou: ppolicies
-objectClass: organizationalUnit
-
-dn: cn=default,ou=ppolicies,$slapd_basedn
-cn: default
-pwdAttribute: userPassword
-pwdAllowUserChange: TRUE
-pwdLockout: FALSE
-pwdSafeModify: FALSE
-pwdCheckQuality: 0
-pwdMustChange: FALSE
-objectClass: device
-objectClass: pwdPolicy
-
-dn: ou=people,$slapd_basedn
-ou: people
-objectClass: organizationalUnit
-
-dn: ou=groups,$slapd_basedn
-ou: groups
-objectClass: organizationalUnit
-
-dn: ou=systems,$slapd_basedn
-ou: systems
-objectClass: organizationalUnit
-
-dn: ou=configs,ou=systems,$slapd_basedn
-objectClass: organizationalUnit
-ou: configs
-
-dn: ou=fusiondirectory,ou=configs,ou=systems,$slapd_basedn
 ou: fusiondirectory
-objectClass: organizationalUnit
 
-dn: ou=aclroles,$slapd_basedn
-ou: aclroles
-objectClass: organizationalUnit
-
-dn: cn=admin,ou=aclroles,$slapd_basedn
-cn: admin
-description: Give all rights on all objects
-objectClass: top
-objectClass: gosaRole
-gosaAclTemplate: 0:all;cmdrw
-
-dn: cn=manager,ou=aclroles,$slapd_basedn
-cn: manager
-description: Give all rights on users in the given branch
-objectClass: top
-objectClass: gosaRole
-gosaAclTemplate: 0:user/password;cmdrw,user/user;cmdrw,user/posixAccount;cmdrw
-
-dn: cn=editowninfos,ou=aclroles,$slapd_basedn
-cn: editowninfos
-description: Allow users to edit their own information (main tab and posix use
-  only on base)
-objectClass: top
-objectClass: gosaRole
-gosaAclTemplate: 0:user/posixAccount;srw,user/user;srw
-
-dn: ou=configs,$slapd_basedn
-ou: configs
-objectClass: organizationalUnit
-
-dn: cn=fusiondirectory,ou=configs,$slapd_basedn
+dn: cn=config,ou=fusiondirectory,$slapd_basedn
+cn: config
+fdLanguage: $fusiondirectory_language
+fdTheme: breezy
+fdTimezone: $fusiondirectory_timezone
+fdSchemaCheck: TRUE
 fdPasswordDefaultHash: ssha
+fdListSummary: TRUE
+fdModificationDetectionAttribute: entryCSN
+fdLogging: TRUE
+fdLdapSizeLimit: 200
+fdLoginAttribute: uid
+fdWarnSSL: FALSE
+fdSessionLifeTime: 1800
+fdHttpHeaderAuthHeaderName: AUTH_USER
+fdEnableSnapshots: TRUE
+fdSnapshotBase: ou=snapshots,$slapd_basedn
+fdSslKeyPath: /etc/ssl/private/fd.key
+fdSslCertPath: /etc/ssl/certs/fd.cert
+fdSslCaCertPath: /etc/ssl/certs/ca.cert
+fdCasServerCaCertPath: /etc/ssl/certs/ca.cert
+fdCasHost: localhost
+fdCasPort: 443
+fdCasContext: /cas
+fdAccountPrimaryAttribute: uid
+fdCnPattern: %givenName% %sn%
+fdStrictNamingRules: TRUE
+fdMinId: 100
+fdUidNumberBase: 2000
+fdGidNumberBase: 2000
 fdUserRDN: ou=people
 fdGroupRDN: ou=groups
 fdAclRoleRDN: ou=aclroles
-fdGidNumberBase: 2000
-fdUidNumberBase: 2000
-fdAccountPrimaryAttribute: uid
-fdLoginAttribute: uid
-fdTimezone: $fusiondirectory_timezone
-fdRfc2307bis: TRUE
-fdStrictNamingRules: TRUE
-fdHandleExpiredAccounts: FALSE
-fdEnableSnapshots: TRUE
-fdSnapshotBase: ou=snapshots,$slapd_basedn
-fdLanguage: $fusiondirectory_language
-fdTheme: default
-fdPrimaryGroupFilter: FALSE
-fdModificationDetectionAttribute: entryCSN
-fdCopyPaste: TRUE
-fdListSummary: TRUE
-fdLdapStats: FALSE
-fdWarnSSL: FALSE
-fdForceSSL: FALSE
-fdSchemaCheck: TRUE
-fdLogging: TRUE
-fdDisplayErrors: FALSE
-fdSessionLifeTime: 1800
+fdIdAllocationMethod: traditional
 fdDebugLevel: 0
-cn: fusiondirectory
-fdForcePasswordDefaultHash: FALSE
-fdLdapSizeLimit: 200
-fdDisplayHookOutput: FALSE
 fdShells: /bin/bash
 fdShells: /bin/csh
 fdShells: /bin/sh
@@ -155,40 +92,77 @@ fdShells: /bin/tcsh
 fdShells: /bin/zsh
 fdShells: /sbin/nologin
 fdShells: /bin/false
+fdShells: /usr/bin/git-shell
+fdForcePasswordDefaultHash: FALSE
+fdHandleExpiredAccounts: FALSE
+fdForceSSL: FALSE
+fdHttpAuthActivated: FALSE
+fdHttpHeaderAuthActivated: FALSE
+fdCasActivated: FALSE
+fdRestrictRoleMembers: FALSE
+fdDisplayErrors: FALSE
+fdLdapStats: FALSE
+fdDisplayHookOutput: FALSE
 fdAclTabOnObjects: FALSE
-fdMinId: 100
-fdIdAllocationMethod: traditional
 fdSambaMachineAccountRDN: ou=computers,ou=systems
 fdSambaIdMapping: FALSE
 fdSambaSID: 0-815-4711
 fdSambaRidBase: 1
 fdSambaGenLMPassword: FALSE
+fdSambaPrimaryGroupWarning: FALSE
 fdMailAttribute: mail
 fdCyrusUseSlashes: FALSE
 fdCyrusDeleteMailbox: FALSE
 fdPpolicyRDN: ou=ppolicies
 fdPpolicyDefaultCn: default
-fdOpsiRDN: ou=opsi
+fdDnsRDN: ou=dns
+fdDNSFinalDot: TRUE
+fdLconfPrefix: lconf
+fdWebserviceForceSSL: TRUE
+fdAliasRDN: ou=alias
 fdOGroupRDN: ou=groups
 fdForceSaslPasswordAsk: FALSE
-fdLconfPrefix: lconf
+fdInventoryRDN: ou=inventory
+fdInventoryMatching: mac
 fdDSARDN: ou=dsa
-fdAliasRDN: ou=alias
-fdRepositoryRDN: ou=repository
-fdRepositoryTypes: debian
-fdNetgroupRDN: ou=netgroups
+fdSudoRDN: ou=sudoers
+fdSupannStructuresRDN: ou=structures
+fdSupannPasswordRecovery: TRUE
 fdDashboardNumberOfDigit: 3
 fdDashboardPrefix: PC
 fdDashboardExpiredAccountsDays: 15
+fdAuditRDN: ou=audit
+fdAuditActions: modify
+fdAuditActions: create
+fdAuditActions: remove
+fdAuditRotationDelay: 120
+fdAutofsRDN: ou=autofs
 fdApplicationsRDN: ou=apps
 fdWebappsRDN: ou=apps
 fdWebappsMenu: none
-fdDNSFinalDot: TRUE
+fdOpsiRDN: ou=opsi
+fdEjbcaRDN: ou=certificates
+fdRepositoryRDN: ou=repository
+fdRepositoryTypes: debian
+fdDhcpRDN: ou=dhcp
+fdPrivateEmailPasswordRecovery: FALSE
 fdSogoRDN: ou=resources
-fdInventoryRDN: ou=inventory
-fdInventoryMatching: mac
-fdWebserviceForceSSL: TRUE
-fdSudoRDN: ou=sudoers
+fdNetgroupRDN: ou=netgroups
+fdUserReminderAlertDelay: 15
+fdUserReminderResendDelay: 7
+fdUserReminderPostponeDays: 15
+fdUserReminderEmail: to.be@chang.ed
+fdUserReminderForwardAlert: TRUE
+fdUserReminderAlertSubject: [FusionDirectory] Your account is about to expire
+fdUserReminderAlertBody:: RGVhciAlMSRzLAp5b3VyIGFjY291bnQgJTIkcyBpcyBhYm91dCB0
+ byBleHBpcmUsIHBsZWFzZSB1c2UgdGhpcyBsaW5rIHRvIGF2b2lkIHRoaXM6IApodHRwczovL2xvY
+ 2FsaG9zdC9mdXNpb25kaXJlY3Rvcnkvc2V0dXAucGhwL2V4cGlyZWRfcG9zdHBvbmUucGhwP3VpZD
+ 0lMiRzJnRva2VuPSUzJHMK
+fdUserReminderForwardConfirmation: TRUE
+fdUserReminderConfirmationSubject: [FusionDirectory] Your account expiration h
+ as been postponed
+fdUserReminderConfirmationBody:: RGVhciAlMSRzLAogeW91ciBhY2NvdW50ICUyJHMgZXhwa
+ XJhdGlvbiBoYXMgYmVlbiBzdWNjZXNzZnVsbHkgcG9zdHBvbmVkLgo=
 fdFaiBaseRDN: ou=fai,ou=configs,ou=systems
 fdFaiScriptRDN: ou=scripts
 fdFaiHookRDN: ou=hooks
@@ -196,33 +170,14 @@ fdFaiTemplateRDN: ou=templates
 fdFaiVariableRDN: ou=variables
 fdFaiProfileRDN: ou=profiles
 fdFaiPackageRDN: ou=packages
-fdFaiPartitionRDN: ou=disk
-objectClass: fusionDirectoryConf
-objectClass: fdSambaPluginConf
-objectClass: fdMailPluginConf
-objectClass: fdPpolicyPluginConf
-objectClass: fdOpsiPluginConf
-objectClass: fusionDirectoryPluginsConf
-objectClass: fdNagiosPluginConf
-objectClass: fdDsaPluginConf
-objectClass: fdAliasPluginConf
-objectClass: fdRepositoryPluginConf
-objectClass: fdNetgroupPluginConf
-objectClass: fdDashboardPluginConf
-objectClass: fdApplicationsPluginConf
-objectClass: fdDnsPluginConf
-objectClass: fdSogoPluginConf
-objectClass: fdInventoryPluginConf
-objectClass: fdWebservicePluginConf
-objectClass: fdSudoPluginConf
-objectClass: fdFaiPluginConf
-objectClass: fdSystemsPluginConf
+fdFaiPartitionTableRDN: ou=disk
 fdSystemRDN: ou=systems
 fdServerRDN: ou=servers,ou=systems
 fdWorkstationRDN: ou=workstations,ou=systems
 fdTerminalRDN: ou=terminals,ou=systems
 fdPrinterRDN: ou=printers,ou=systems
 fdComponentRDN: ou=netdevices,ou=systems
+fdPhoneRDN: ou=phones,ou=systems
 fdMobilePhoneRDN: ou=mobile,ou=systems
 fdEncodings: UTF-8=UTF-8
 fdEncodings: ISO8859-1=ISO8859-1 (Latin 1)
@@ -231,27 +186,140 @@ fdEncodings: ISO8859-3=ISO8859-3 (Latin 3)
 fdEncodings: ISO8859-4=ISO8859-4 (Latin 4)
 fdEncodings: ISO8859-5=ISO8859-5 (Latin 5)
 fdEncodings: cp850=CP850 (Europe)
+objectClass: fusionDirectoryConf
+objectClass: fdSambaPluginConf
+objectClass: fdMailPluginConf
+objectClass: fdPpolicyPluginConf
+objectClass: fdDnsPluginConf
+objectClass: fdNagiosPluginConf
+objectClass: fdWebservicePluginConf
+objectClass: fdCommunityPluginConf
+objectClass: fdAliasPluginConf
+objectClass: fusionDirectoryPluginsConf
+objectClass: fdInventoryPluginConf
+objectClass: fdDsaPluginConf
+objectClass: fdSudoPluginConf
+objectClass: fdSupannPluginConf
+objectClass: fdNewsletterPluginConf
+objectClass: fdDashboardPluginConf
+objectClass: fdAuditPluginConf
+objectClass: fdAutofsPluginConf
+objectClass: fdApplicationsPluginConf
+objectClass: fdOpsiPluginConf
+objectClass: fdEjbcaPluginConf
+objectClass: fdRepositoryPluginConf
+objectClass: fdDhcpPluginConf
+objectClass: fdPersonalPluginConf
+objectClass: fdSogoPluginConf
+objectClass: fdNetgroupPluginConf
+objectClass: fdUserReminderPluginConf
+objectClass: fdFaiPluginConf
+objectClass: fdSystemsPluginConf
+objectClass: fdPasswordRecoveryConf
+fdPasswordRecoveryActivated: FALSE
+fdPasswordRecoveryEmail: to.be@chang.ed
+fdPasswordRecoveryValidity: 10
+fdPasswordRecoverySalt: SomethingSecretAndVeryLong
+fdPasswordRecoveryUseAlternate: FALSE
+fdPasswordRecoveryMailSubject: [FusionDirectory] Password recovery link
+fdPasswordRecoveryMailBody:: SGVsbG8sCgpIZXJlIGFyZSB5b3VyIGluZm9ybWF0aW9ucyA6I
+ AogLSBMb2dpbiA6ICVzCiAtIExpbmsgOiAlcwoKVGhpcyBsaW5rIGlzIG9ubHkgdmFsaWQgZm9yID
+ EwIG1pbnV0ZXMu
+fdPasswordRecoveryMail2Subject: [FusionDirectory] Password recovery successful
+fdPasswordRecoveryMail2Body:: SGVsbG8sCgpZb3VyIHBhc3N3b3JkIGhhcyBiZWVuIGNoYW5n
+ ZWQuCllvdXIgbG9naW4gaXMgc3RpbGwgJXMu
+
+dn: ou=aclroles,$slapd_basedn
+objectClass: organizationalUnit
+ou: aclroles
+
+dn: cn=admin,ou=aclroles,$slapd_basedn
+objectClass: top
+objectClass: gosaRole
+cn: admin
+description: Gives all rights on all objects
+gosaAclTemplate: 0:all;cmdrw
+
+dn: cn=manager,ou=aclroles,$slapd_basedn
+cn: manager
+description: Give all rights on users in the given branch
+objectClass: top
+objectClass: gosaRole
+gosaAclTemplate: 0:user/user;cmdrw,user/posixAccount;cmdrw
+
+dn: cn=editowninfos,ou=aclroles,$slapd_basedn
+cn: editowninfos
+description: Allow users to edit their own information (main tab and posix use
+  only on base)
+objectClass: top
+objectClass: gosaRole
+gosaAclTemplate: 0:user/user;srw,user/posixAccount;srw
+
+dn: cn=editownpwd,ou=aclroles,$slapd_basedn
+cn: editownpwd
+description: Allow users to edit their own password (use only on base)
+objectClass: top
+objectClass: gosaRole
+gosaAclTemplate: 0:user/user;#userPassword;srw
+
+dn: ou=people,$slapd_basedn
+objectClass: organizationalUnit
+ou: people
 
 dn: uid=fd-admin,ou=people,$slapd_basedn
-objectClass: top
-objectClass: person
-objectClass: gosaAccount
-objectClass: organizationalPerson
-objectClass: inetOrgPerson
-givenName: System
+cn: System Administrator
 sn: Administrator
-cn: System Administrator-fd-admin
+givenName: System
 uid: fd-admin
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
 userPassword: $(slappasswd -s "$fusiondirectory_admin_password")
+
+#dn: ou=audit,$slapd_basedn
+#objectClass: organizationalUnit
+#ou: audit
+
+#dn: ou=locks,ou=fusiondirectory,$slapd_basedn
+#objectClass: organizationalUnit
+#ou: locks
+
+#dn: ou=snapshots,$slapd_basedn
+#objectClass: organizationalUnit
+#ou: snapshots
+
+#dn: ou=systems,$slapd_basedn
+#objectClass: organizationalUnit
+#ou: systems
+
+#dn: ou=servers,ou=systems,$slapd_basedn
+#objectClass: organizationalUnit
+#ou: servers
+
+#dn: ou=tokens,ou=fusiondirectory,$slapd_basedn
+#objectClass: organizationalUnit
+#ou: tokens
+
+dn: ou=ppolicies,$slapd_basedn
+objectClass: organizationalUnit
+ou: ppolicies
+
+dn: cn=default,ou=ppolicies,$slapd_basedn
+objectClass: device
+objectClass: pwdPolicy
+objectClass: pwdPolicyChecker
+pwdAttribute: userPassword
+cn: default
+pwdAllowUserChange: TRUE
+pwdCheckQuality: 0
+pwdLockout: TRUE
+pwdSafeModify: FALSE
+pwdMustChange: FALSE
 EOF
 
 cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
 <?xml version="1.0"?>
 <conf>
-  <serverservice>
-    <tab class="serviceDHCP"        />
-    <tab class="serviceDNS"         />
-  </serverservice>
   <main default="default"
         logging="TRUE"
         displayErrors="FALSE"
@@ -259,13 +327,10 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
         templateCompileDirectory="/var/spool/fusiondirectory/"
         debugLevel="0"
     >
-    <location name="default"
-        ldapTLS="TRUE"
-        config="ou=fusiondirectory,ou=configs,ou=systems,$slapd_basedn">
-
+    <location name="default" ldapTLS="TRUE">
         <referral URI="ldap://localhost/$slapd_basedn"
-                        adminDn="cn=admin,$slapd_basedn"
-                        adminPassword="$slapd_admin_password" />
+                  adminDn="cn=admin,$slapd_basedn"
+                  adminPassword="$slapd_admin_password" />
     </location>
   </main>
 </conf>
