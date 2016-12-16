@@ -260,7 +260,7 @@ cn: editownpwd
 description: Allow users to edit their own password (use only on base)
 objectClass: top
 objectClass: gosaRole
-gosaAclTemplate: 0:user/user;#userPassword;srw
+gosaAclTemplate: 0:user/user;s#userPassword;rw
 
 dn: ou=people,$slapd_basedn
 objectClass: organizationalUnit
