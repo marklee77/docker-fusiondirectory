@@ -44,6 +44,7 @@ objectClass: organization
 objectClass: gosaDepartment
 objectclass: gosaAcl
 gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,$slapd_basedn" | base64):$(echo -n "uid=fd-admin,ou=people,$slapd_basedn" | base64)
+gosaAclEntry: 1:base:$(echo -n "cn=editownpwd,ou=aclroles,$slapd_basedn" | base64):$(echo -n "*" | base64)
 
 dn: ou=fusiondirectory,$slapd_basedn
 objectClass: organizationalUnit
