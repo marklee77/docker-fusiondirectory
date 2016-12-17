@@ -109,7 +109,8 @@ RUN apt-get update && \
         php-mdb2 && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-COPY fusiondirectory-ldap-initdb.sh /etc/ldap/dbinit.d
+COPY fusiondirectory-ldap-initdb.sh /etc/ldap/dbinit.d/00-fusiondirectory
+RUN chmod 0755 /etc/ldap/dbinit.d/00-fusiondirectory
 COPY apache2.conf /etc/supervisor/conf.d
 
 EXPOSE 80

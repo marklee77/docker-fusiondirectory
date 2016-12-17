@@ -43,7 +43,7 @@ objectClass: dcObject
 objectClass: organization
 objectClass: gosaDepartment
 objectclass: gosaAcl
-gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,$slapd_basedn" | base64):$(echo -n "uid=fd-admin,ou=people,$slapd_basedn" | base64)
+gosaAclEntry: 0:subtree:$(echo -n "cn=admin,ou=aclroles,$slapd_basedn" | base64):$(echo -n "uid=admin,ou=people,$slapd_basedn" | base64)
 gosaAclEntry: 1:base:$(echo -n "cn=editownpwd,ou=aclroles,$slapd_basedn" | base64):$(echo -n "*" | base64)
 
 dn: ou=fusiondirectory,$slapd_basedn
@@ -267,11 +267,11 @@ dn: ou=people,$slapd_basedn
 objectClass: organizationalUnit
 ou: people
 
-dn: uid=fd-admin,ou=people,$slapd_basedn
+dn: uid=admin,ou=people,$slapd_basedn
 cn: System Administrator
 sn: Administrator
 givenName: System
-uid: fd-admin
+uid: admin
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
