@@ -1,8 +1,14 @@
 #!/bin/bash
 
+: ${fusiondirectory_ldap_uri:=ldap://localhost}
+: ${fusiondirectory_ldap_tls:=TRUE}
+
 : ${fusiondirectory_timezone:=Europe/London}
 : ${fusiondirectory_language:=en_US}
 : ${fusiondirectory_admin_password:=$(pwgen -s1 32)}
+
+# set secure umask
+umask 0227
 
 /usr/sbin/fusiondirectory-insert-schema -e /etc/ldap/schema/nis.schema -y
 SCHEMAS_TO_LOAD=$(ls /etc/ldap/schema/fusiondirectory/*.schema)
@@ -304,16 +310,14 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
         templateCompileDirectory="/var/spool/fusiondirectory/"
         debugLevel="0"
     >
-    <location name="default" ldapTLS="TRUE">
-        <referral URI="ldap://localhost/$slapd_basedn"
+    <location name="default" ldapTLS="$fusiondirectory_ldap_tls">
+        <referral URI="$fusiondirectory_ldap_uri/$slapd_basedn"
                   adminDn="cn=admin,$slapd_basedn"
                   adminPassword="$slapd_admin_password" />
     </location>
   </main>
 </conf>
 EOF
-chown root:www-data /etc/fusiondirectory/fusiondirectory.conf
-chmod 0640 /etc/fusiondirectory/fusiondirectory.conf
+chgrp www-data /etc/fusiondirectory/fusiondirectory.conf
 
 echo -n "$fusiondirectory_admin_password" > /etc/fusiondirectory/fusiondirectory.passwd
-chmod 0600 /etc/fusiondirectory/fusiondirectory.passwd
