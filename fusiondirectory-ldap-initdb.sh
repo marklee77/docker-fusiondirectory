@@ -298,6 +298,10 @@ pwdCheckQuality: 0
 pwdLockout: TRUE
 pwdSafeModify: FALSE
 pwdMustChange: FALSE
+
+dn: ou=alias,$slapd_basedn
+objectClass: organizationalUnit
+ou: alias
 EOF
 
 cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
