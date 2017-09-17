@@ -3,8 +3,10 @@ MAINTAINER Mark Stillwell <mark@stillwell.me>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key 62B4981F && \
-    echo "deb http://repos.fusiondirectory.org/debian-jessie jessie main" > \
+RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key D744D55EACDA69FF && \
+    echo "deb http://repos.fusiondirectory.org/fusiondirectory-current/debian-jessie jessie main" > \
+         /etc/apt/sources.list.d/fusiondirectory.list && \
+    echo "deb http://repos.fusiondirectory.org/fusiondirectory-extra/debian-jessie jessie main" >> \
          /etc/apt/sources.list.d/fusiondirectory.list
 
 RUN apt-get update && \
