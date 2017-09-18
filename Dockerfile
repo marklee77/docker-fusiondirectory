@@ -3,7 +3,7 @@ MAINTAINER Mark Stillwell <mark@stillwell.me>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key D744D55EACDA69FF && \
+RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key 0xD744D55EACDA69FF && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-current/debian-jessie jessie main" > \
          /etc/apt/sources.list.d/fusiondirectory.list && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-extra/debian-jessie jessie main" >> \
@@ -12,6 +12,7 @@ RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key D744D55EACDA69FF 
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
         fusiondirectory \
+        fusiondirectory-schema \
         fusiondirectory-plugin-alias \
         fusiondirectory-plugin-alias-schema \
         fusiondirectory-plugin-applications \
