@@ -5,7 +5,14 @@
 
 : ${fusiondirectory_timezone:=Europe/London}
 : ${fusiondirectory_language:=en_US}
-: ${fusiondirectory_admin_password:=$(pwgen -s1 32)}
+
+if [ -z "$fusiondirectory_admin_password" ]; then
+    if [ -f /run/secrets/fusiondirectory_admin_password ]; then
+        fusiondirectory_admin_password="$(head -1 /run/secrets/fusiondirectory_admin_password)"
+    else
+        fusiondirectory_admin_password="$(pwgen -s1 32)"
+    fi
+fi
 
 # set secure umask
 umask 0227
