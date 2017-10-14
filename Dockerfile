@@ -110,7 +110,16 @@ RUN apt-get update && \
         fusiondirectory-webservice-shell \
         libapache2-mod-php5 \
         php-mdb2 && \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    rm -rf \
+        /etc/fusiondirectory/fusiondirectory.conf \
+        /etc/fusiondirectory/fusiondirectory.passwd \
+        /var/cache/apt/* \
+        /var/lib/apt/lists/*
+
+RUN ln -s /data/fusiondirectory/fusiondirectory.conf \
+          /etc/fusiondirectory/fusiondirectory.conf && \
+    ln -s /data/fusiondirectory/fusiondirectory.passwd \
+          /etc/fusiondirectory/fusiondirectory.passwd
 
 COPY root/etc/ldap/dbinit.d/10-fusiondirectory /etc/ldap/dbinit.d/
 RUN chmod 0755 /etc/ldap/dbinit.d/10-fusiondirectory

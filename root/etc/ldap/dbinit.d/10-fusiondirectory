@@ -15,7 +15,7 @@ if [ -z "$fusiondirectory_admin_password" ]; then
 fi
 
 # set secure umask
-umask 0227
+umask 0277
 
 /usr/sbin/fusiondirectory-insert-schema -e /etc/ldap/schema/nis.schema -y
 SCHEMAS_TO_LOAD=$(ls /etc/ldap/schema/fusiondirectory/*.schema)
@@ -179,7 +179,12 @@ objectClass: organizationalUnit
 ou: locks
 EOF
 
-cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
+config_file=/etc/fusiondirectory/fusiondirectory.conf
+[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
+config_dir="$(dirname "$config_file")"
+[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
+if ! [ -f "$config_file" ]; then
+    cat > "$config_file" <<EOF
 <?xml version="1.0"?>
 <conf>
   <main default="default"
@@ -197,6 +202,14 @@ cat > /etc/fusiondirectory/fusiondirectory.conf <<EOF
   </main>
 </conf>
 EOF
-chgrp www-data /etc/fusiondirectory/fusiondirectory.conf
+    chgrp www-data "$config_file"
+    chmod 440 "$config_file"
+fi
 
-echo -n "$fusiondirectory_admin_password" > /etc/fusiondirectory/fusiondirectory.passwd
+config_file=/etc/fusiondirectory/fusiondirectory.passwd
+[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
+config_dir="$(dirname "$config_file")"
+[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
+if ! [ -f "$config_file" ]; then
+    echo -n "$fusiondirectory_admin_password" > "$config_file"
+fi
