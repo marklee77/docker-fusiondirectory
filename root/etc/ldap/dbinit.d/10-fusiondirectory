@@ -6,16 +6,20 @@
 : ${fusiondirectory_timezone:=Europe/London}
 : ${fusiondirectory_language:=en_US}
 
-if [ -z "$fusiondirectory_admin_password" ]; then
-    if [ -f /run/secrets/fusiondirectory_admin_password ]; then
-        fusiondirectory_admin_password="$(head -1 /run/secrets/fusiondirectory_admin_password)"
-    else
-        fusiondirectory_admin_password="$(pwgen -s1 32)"
-    fi
-fi
+: ${fusiondirectory_admin_password:="$(pwgen -s1 32)"}
 
 # set secure umask
 umask 0277
+
+config_file=/etc/fusiondirectory/fusiondirectory.passwd
+[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
+config_dir="$(dirname "$config_file")"
+[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
+if [ -f "$config_file" ]; then
+    fusiondirectory_admin_password="$(cat "$config_file")"
+else
+    echo -n "$fusiondirectory_admin_password" > "$config_file"
+fi
 
 /usr/sbin/fusiondirectory-insert-schema -e /etc/ldap/schema/nis.schema -y
 SCHEMAS_TO_LOAD=$(ls /etc/ldap/schema/fusiondirectory/*.schema)
@@ -206,10 +210,3 @@ EOF
     chmod 440 "$config_file"
 fi
 
-config_file=/etc/fusiondirectory/fusiondirectory.passwd
-[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
-config_dir="$(dirname "$config_file")"
-[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
-if ! [ -f "$config_file" ]; then
-    echo -n "$fusiondirectory_admin_password" > "$config_file"
-fi
