@@ -1,0 +1,10 @@
+docker service create --name ldap --network dss-internal \
+    --mount type=volume,source=fusiondirectory,target=/data \
+    --config source=dsscacert.pem,target=/etc/ssl/slapd/ca.crt,mode=0444 \
+    --config source=ldapcert.pem,target=/etc/ssl/slapd/ldap.crt,mode=0444 \
+    --secret source=ldapkey.pem,target=/etc/ssl/slapd/ldap.key,uid=200,gid=200,mode=0440 \
+    --secret source=fusiondirectory_admin_password,target=/etc/fusiondirectory/fusiondirectory.passwd,mode=0400 \
+    --env fusiondirectory_ldap_uri=ldap://ldap \
+    --detach=false \
+    marklee77/fusiondirectory:latest
+
