@@ -45,8 +45,6 @@ RUN apt-get update && \
         fusiondirectory-plugin-ppolicy-schema \
         fusiondirectory-plugin-quota \
         fusiondirectory-plugin-quota-schema \
-        fusiondirectory-plugin-sogo \
-        fusiondirectory-plugin-sogo-schema \
         fusiondirectory-plugin-spamassassin \
         fusiondirectory-plugin-spamassassin-schema \
         fusiondirectory-plugin-ssh \
