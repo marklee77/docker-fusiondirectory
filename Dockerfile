@@ -15,14 +15,11 @@ RUN apt-get update && \
         fusiondirectory-schema \
         fusiondirectory-plugin-alias \
         fusiondirectory-plugin-alias-schema \
-        fusiondirectory-plugin-applications \
-        fusiondirectory-plugin-applications-schema \
         fusiondirectory-plugin-audit \
         fusiondirectory-plugin-audit-schema \
         fusiondirectory-plugin-certificates \
         fusiondirectory-plugin-community \
         fusiondirectory-plugin-community-schema \
-        fusiondirectory-plugin-developers \
         fusiondirectory-plugin-dns \
         fusiondirectory-plugin-dns-schema \
         fusiondirectory-plugin-dovecot \
@@ -48,32 +45,20 @@ RUN apt-get update && \
         fusiondirectory-plugin-ppolicy-schema \
         fusiondirectory-plugin-quota \
         fusiondirectory-plugin-quota-schema \
-        fusiondirectory-plugin-repository \
-        fusiondirectory-plugin-repository-schema \
-        fusiondirectory-plugin-samba \
-        fusiondirectory-plugin-samba-schema \
         fusiondirectory-plugin-sogo \
         fusiondirectory-plugin-sogo-schema \
         fusiondirectory-plugin-spamassassin \
         fusiondirectory-plugin-spamassassin-schema \
-        fusiondirectory-plugin-squid \
-        fusiondirectory-plugin-squid-schema \
         fusiondirectory-plugin-ssh \
         fusiondirectory-plugin-ssh-schema \
-        fusiondirectory-plugin-subcontracting \
-        fusiondirectory-plugin-subcontracting-schema \
         fusiondirectory-plugin-sudo \
         fusiondirectory-plugin-sudo-schema \
         fusiondirectory-plugin-sympa \
         fusiondirectory-plugin-sympa-schema \
         fusiondirectory-plugin-systems \
         fusiondirectory-plugin-systems-schema \
-        fusiondirectory-plugin-user-reminder \
-        fusiondirectory-plugin-user-reminder-schema \
         fusiondirectory-plugin-weblink \
         fusiondirectory-plugin-weblink-schema \
-        fusiondirectory-plugin-webservice \
-        fusiondirectory-plugin-webservice-schema \
         fusiondirectory-schema \
         fusiondirectory-smarty3-acl-render \
         fusiondirectory-theme-oxygen \
