@@ -1,14 +1,12 @@
 FROM marklee77/slapd:jessie
-MAINTAINER Mark Stillwell <mark@stillwell.me>
+LABEL maintainer="Mark Stillwell <mark@stillwell.me>"
 
 ENV DEBIAN_FRONTEND noninteractive
-
 RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key 0xD744D55EACDA69FF && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-current/debian-jessie jessie main" > \
          /etc/apt/sources.list.d/fusiondirectory.list && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-extra/debian-jessie jessie main" >> \
          /etc/apt/sources.list.d/fusiondirectory.list
-
 RUN apt-get update && \
     apt-get -y install --no-install-recommends \
         fusiondirectory \
