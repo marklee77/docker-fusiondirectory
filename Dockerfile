@@ -7,7 +7,9 @@ RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key 0xD744D55EACDA69F
          /etc/apt/sources.list.d/fusiondirectory.list && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-extra/debian-jessie jessie main" >> \
          /etc/apt/sources.list.d/fusiondirectory.list
-RUN apt-get update && \
+RUN mkdir -m 0755 -p /tmp/run && \
+    mkdir -m 0755 -p /tmp/run/lock && \
+    apt-get update && \
     apt-get -y install --no-install-recommends \
         fusiondirectory \
         fusiondirectory-schema \
