@@ -1,4 +1,5 @@
 #!/bin/bash
+. /usr/local/share/my_init/functions.sh
 
 : ${fusiondirectory_ldap_uri:=ldap://localhost}
 : ${fusiondirectory_ldap_tls:=TRUE}
@@ -9,17 +10,38 @@
 : ${fusiondirectory_admin_password:="$(pwgen -s1 32)"}
 
 # set secure umask
-umask 0277
+umask 077
 
-config_file=/etc/fusiondirectory/fusiondirectory.passwd
-[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
-config_dir="$(dirname "$config_file")"
-[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
-if [ -f "$config_file" ]; then
-    fusiondirectory_admin_password="$(cat "$config_file")"
+file="$(mypath /etc/fusiondirectory/fusiondirectory.passwd)"
+if [ -f "$file" ]; then
+    fusiondirectory_admin_password="$(cat "$file")"
 else
-    echo -n "$fusiondirectory_admin_password" > "$config_file"
+    echo -n "$fusiondirectory_admin_password" > "$file"
 fi
+
+# set group-access umask
+umask 007
+
+file="$(mypath /etc/fusiondirectory/fusiondirectory.conf)"
+cat > "$file" <<EOF
+<?xml version="1.0"?>
+<conf>
+  <main default="default"
+        logging="TRUE"
+        displayErrors="FALSE"
+        forceSSL="FALSE"
+        templateCompileDirectory="/var/spool/fusiondirectory/"
+        debugLevel="0"
+    >
+    <location name="default" ldapTLS="$fusiondirectory_ldap_tls">
+        <referral URI="$fusiondirectory_ldap_uri/$slapd_basedn"
+                  adminDn="cn=admin,$slapd_basedn"
+                  adminPassword="$slapd_admin_password" />
+    </location>
+  </main>
+</conf>
+EOF
+chgrp www-data "$file"
 
 /usr/sbin/fusiondirectory-insert-schema -e /etc/ldap/schema/nis.schema -y
 SCHEMAS_TO_LOAD=$(ls /etc/ldap/schema/fusiondirectory/*.schema)
@@ -182,31 +204,3 @@ dn: ou=locks,ou=fusiondirectory,$slapd_basedn
 objectClass: organizationalUnit
 ou: locks
 EOF
-
-config_file=/etc/fusiondirectory/fusiondirectory.conf
-[ -L "$config_file" ] && config_file="$(readlink "$config_file")"
-config_dir="$(dirname "$config_file")"
-[ -d "$config_dir" ] || mkdir -m 0755 -p "$config_dir"
-if ! [ -f "$config_file" ]; then
-    cat > "$config_file" <<EOF
-<?xml version="1.0"?>
-<conf>
-  <main default="default"
-        logging="TRUE"
-        displayErrors="FALSE"
-        forceSSL="FALSE"
-        templateCompileDirectory="/var/spool/fusiondirectory/"
-        debugLevel="0"
-    >
-    <location name="default" ldapTLS="$fusiondirectory_ldap_tls">
-        <referral URI="$fusiondirectory_ldap_uri/$slapd_basedn"
-                  adminDn="cn=admin,$slapd_basedn"
-                  adminPassword="$slapd_admin_password" />
-    </location>
-  </main>
-</conf>
-EOF
-    chgrp www-data "$config_file"
-    chmod 440 "$config_file"
-fi
-
