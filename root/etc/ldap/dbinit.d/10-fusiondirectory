@@ -20,7 +20,7 @@ else
 fi
 
 # set group-access umask
-umask 007
+umask 027
 
 file="$(mypath /etc/fusiondirectory/fusiondirectory.conf)"
 cat > "$file" <<EOF
