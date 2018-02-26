@@ -1,9 +1,7 @@
 FROM marklee77/slapd:jessie
 LABEL maintainer="Mark Stillwell <mark@stillwell.me>"
 
-RUN mkdir -m 0755 -p /tmp/run && \
-    mkdir -m 0755 -p /tmp/run/lock && \
-    apt-key adv --keyserver pool.sks-keyservers.net --recv-key 0xD744D55EACDA69FF && \
+RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-key 0xD744D55EACDA69FF && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-current/debian-jessie jessie main" > \
          /etc/apt/sources.list.d/fusiondirectory.list && \
     echo "deb http://repos.fusiondirectory.org/fusiondirectory-extra/debian-jessie jessie main" >> \
@@ -44,8 +42,6 @@ RUN mkdir -m 0755 -p /tmp/run && \
         fusiondirectory-plugin-ppolicy-schema \
         fusiondirectory-plugin-quota \
         fusiondirectory-plugin-quota-schema \
-        fusiondirectory-plugin-spamassassin \
-        fusiondirectory-plugin-spamassassin-schema \
         fusiondirectory-plugin-ssh \
         fusiondirectory-plugin-ssh-schema \
         fusiondirectory-plugin-sudo \
@@ -67,11 +63,6 @@ RUN mkdir -m 0755 -p /tmp/run && \
         /etc/fusiondirectory/fusiondirectory.passwd \
         /var/cache/apt/* \
         /var/lib/apt/lists/*
-
-RUN ln -s /data/fusiondirectory/fusiondirectory.conf \
-          /etc/fusiondirectory/fusiondirectory.conf && \
-    ln -s /data/fusiondirectory/fusiondirectory.passwd \
-          /etc/fusiondirectory/fusiondirectory.passwd
 
 COPY root/etc/ldap/dbinit.d/10-fusiondirectory /etc/ldap/dbinit.d/
 RUN chmod 0755 /etc/ldap/dbinit.d/10-fusiondirectory

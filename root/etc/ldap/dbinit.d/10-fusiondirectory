@@ -12,18 +12,18 @@
 # set secure umask
 umask 077
 
-file="$(mypath /etc/fusiondirectory/fusiondirectory.passwd)"
+file=/etc/fusiondirectory/fusiondirectory.passwd
 if [ -f "$file" ]; then
     fusiondirectory_admin_password="$(cat "$file")"
 else
-    echo -n "$fusiondirectory_admin_password" > "$file"
+    echo -n "$fusiondirectory_admin_password" >"$file"
 fi
 
 # set group-access umask
 umask 027
 
-file="$(mypath /etc/fusiondirectory/fusiondirectory.conf)"
-cat > "$file" <<EOF
+file=/etc/fusiondirectory/fusiondirectory.conf
+cat >"$file" <<EOF
 <?xml version="1.0"?>
 <conf>
   <main default="default"
